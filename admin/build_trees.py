@@ -1,0 +1,122 @@
+import json
+
+TREES = [
+    {
+        "id": "conveyor_not_running",
+        "title": "Conveyor Zone Not Running",
+        "icon": "&#9881;&#65039;",
+        "start": "q1",
+        "nodes": {
+            "q1": {
+                "question": "What do you observe at the conveyor zone?",
+                "options": [
+                    {"label": "Product is piling up / not releasing downstream", "goto": "q_accum"},
+                    {"label": "The roller doesn't spin at all", "goto": "q_motor"},
+                    {"label": "The whole section is dead — no LEDs lit anywhere", "goto": "leaf_power"},
+                    {"label": "Roller spins but product isn't moving", "goto": "leaf_mechanical"},
+                ],
+            },
+            "q_accum": {
+                "question": "Is the zone intentionally holding product (waiting on a downstream stop), or is this unexpected?",
+                "options": [
+                    {"label": "Expected — downstream is stopped/full on purpose", "goto": "leaf_normal_accum"},
+                    {"label": "Unexpected — nothing downstream looks jammed", "goto": "q_sensor"},
+                ],
+            },
+            "q_sensor": {
+                "question": "Check the Sensor LED on the ConveyLinx module for that zone. What do you see?",
+                "options": [
+                    {"label": "Blinking red", "goto": "leaf_sensor_arrivaljam"},
+                    {"label": "Blinking green/amber", "goto": "leaf_sensor_jam"},
+                    {"label": "Solid red", "goto": "leaf_sensor_error"},
+                    {"label": "Solid green, but nothing is physically there", "goto": "leaf_photoeye"},
+                ],
+            },
+            "q_motor": {
+                "question": "Look at the Motor LED for that zone on the ConveyLinx module. What color/pattern?",
+                "options": [
+                    {"label": "Solid red", "goto": "leaf_motor_notconnected"},
+                    {"label": "Blinking red (slow)", "goto": "leaf_motor_overload"},
+                    {"label": "Flashing red, and the motor is stopped", "goto": "leaf_motor_short"},
+                    {"label": "Flashing red, and the motor is running / humming", "goto": "leaf_motor_overcurrent"},
+                    {"label": "LED is completely off", "goto": "leaf_motor_off"},
+                ],
+            },
+            "leaf_power": {"result": {"search": "power low-voltage", "note": "Check the 24VDC power supply feeding this zone group first."}},
+            "leaf_mechanical": {"result": {"note": "This points to a mechanical problem, not a control fault — check for a slipping belt/O-ring drive band, a worn roller, or a broken sprocket/chain (depending on conveyor type)."}},
+            "leaf_normal_accum": {"result": {"note": "This is normal ZPA behavior — the zone is correctly holding product because downstream isn't ready. No fault. Clear the downstream condition and the zone releases automatically."}},
+            "leaf_sensor_arrivaljam": {"result": {"search": "sensor blinking red arrival jam missing", "equip": "ConveyLinx ERSC"}},
+            "leaf_sensor_jam": {"result": {"search": "sensor jam amber green blinking", "equip": "ConveyLinx ERSC"}},
+            "leaf_sensor_error": {"result": {"search": "sensor solid red error state pin", "equip": "ConveyLinx ERSC"}},
+            "leaf_photoeye": {"result": {"note": "Clean the photo-eye lens and reflector and confirm alignment. If this is an RT3/MDR roller with its own control card, also check its Photo-eye Error blink code (1 blink)."}},
+            "leaf_motor_notconnected": {"result": {"search": "motor solid red not connected stalled", "equip": "ConveyLinx ERSC"}},
+            "leaf_motor_overload": {"result": {"search": "motor blinking red overloaded overheated", "equip": "ConveyLinx ERSC"}},
+            "leaf_motor_short": {"result": {"search": "motor flashing red stopped short circuit phase", "equip": "ConveyLinx ERSC"}},
+            "leaf_motor_overcurrent": {"result": {"search": "motor flashing red running over-current", "equip": "ConveyLinx ERSC"}},
+            "leaf_motor_off": {"result": {"note": "An LED that's completely off (not even the base module-status LED) usually means no power at all to that module — check the 24VDC supply and the module's power connector before assuming the motor itself is bad."}},
+        },
+    },
+    {
+        "id": "vfd_fault",
+        "title": "VFD Showing a Fault",
+        "icon": "&#9889;",
+        "start": "q1",
+        "nodes": {
+            "q1": {
+                "question": "Which drive is faulted?",
+                "options": [
+                    {"label": "Rockwell PowerFlex 525 (small black keypad)", "goto": "q_pf"},
+                    {"label": "Eaton SVX9000 / SPX9000", "goto": "q_eaton"},
+                    {"label": "Not sure which one", "goto": "leaf_identify"},
+                ],
+            },
+            "q_pf": {
+                "question": "What does the display show?",
+                "options": [
+                    {"label": "A fault code like F0xx (e.g. F004, F007, F013...)", "goto": "leaf_pf_readcode"},
+                    {"label": "Display is dark / no power at all", "goto": "leaf_pf_nopower"},
+                ],
+            },
+            "q_eaton": {
+                "question": "What does the display show?",
+                "options": [
+                    {"label": "A fault code like F# (e.g. F1, F7, F13...)", "goto": "leaf_eaton_readcode"},
+                    {"label": "Display is dark / no power at all", "goto": "leaf_eaton_nopower"},
+                ],
+            },
+            "leaf_identify": {"result": {"note": "PowerFlex 525 has a small LCD screen with up/down arrow buttons directly on the drive door. Eaton SVX9000/SPX9000 has a larger backlit keypad. Check the drive nameplate if you're still unsure — the model number is printed on it."}},
+            "leaf_pf_readcode": {"result": {"note": "Read the exact code off the display (e.g. F004) — then type that code into the main search bar, or open the VFD Faults tab and find it under PowerFlex 525. There are 47 PowerFlex fault codes in the tool (F002-F127)."}},
+            "leaf_eaton_readcode": {"result": {"note": "Read the exact code off the display (e.g. F7) — then type that code into the main search bar, or open the VFD Faults tab and find it under Eaton SVX9000/SPX9000. There are 40 Eaton fault codes in the tool (F1-F56)."}},
+            "leaf_pf_nopower": {"result": {"search": "power loss undervoltage", "equip": "PowerFlex 525", "limit": 3}},
+            "leaf_eaton_nopower": {"result": {"search": "undervoltage power", "equip": "Eaton SVX9000 / SPX9000", "limit": 3}},
+        },
+    },
+    {
+        "id": "slam_not_applying",
+        "title": "SLAM / CTM Not Applying Labels",
+        "icon": "&#128230;",
+        "start": "q1",
+        "nodes": {
+            "q1": {
+                "question": "What's happening at the SLAM / CTM tamp applicator?",
+                "options": [
+                    {"label": "No label picks up onto the tamp pad at all", "goto": "leaf_vacuum"},
+                    {"label": "Label picks up but doesn't transfer onto the carton", "goto": "leaf_blow"},
+                    {"label": "Label applies but falls off / doesn't stick", "goto": "leaf_notadhering"},
+                    {"label": "Label applies crooked or off-position", "goto": "leaf_crooked"},
+                    {"label": "Nothing works — no air movement anywhere", "goto": "leaf_dead"},
+                ],
+            },
+            "leaf_vacuum": {"result": {"search": "vacuum picking up pad", "equip": "SLAM / CTM Tamp Applicator"}},
+            "leaf_blow": {"result": {"search": "blow-on transfer", "equip": "SLAM / CTM Tamp Applicator"}},
+            "leaf_notadhering": {"result": {"search": "not adhering falls off", "equip": "SLAM / CTM Tamp Applicator"}},
+            "leaf_crooked": {"result": {"search": "crooked off position", "equip": "SLAM / CTM Tamp Applicator"}},
+            "leaf_dead": {"result": {"search": "applicator dead no air", "equip": "SLAM / CTM Tamp Applicator"}},
+        },
+    },
+]
+
+out_path = r"C:\Users\souyackg\Desktop\ACY1 Troubleshooter\admin\decision_trees.json"
+with open(out_path, "w", encoding="utf-8") as f:
+    json.dump(TREES, f, ensure_ascii=False, indent=1)
+print(f"Wrote {len(TREES)} trees to {out_path}")
