@@ -297,5 +297,91 @@
     }
    }
   }
+ },
+ {
+  "id": "intelliq_not_accumulating",
+  "title": "IntelliQ Zone Not Accumulating",
+  "icon": "&#128230;",
+  "start": "q1",
+  "nodes": {
+   "q1": {
+    "question": "What do you see at the IntelliQ ZoneFlex zone?",
+    "options": [
+     {
+      "label": "Whole zone/section is dead — module GREEN LED is off",
+      "goto": "leaf_power"
+     },
+     {
+      "label": "Module has power (green on) but the zone won't stop or release product",
+      "goto": "q_detect"
+     },
+     {
+      "label": "Detection is erratic — boxes missed or yellow LED flashing",
+      "goto": "leaf_erratic"
+     },
+     {
+      "label": "Not sure what the ZFS/ZFA/ZFM LEDs mean",
+      "goto": "leaf_ref"
+     }
+    ]
+   },
+   "q_detect": {
+    "question": "Watch the module's YELLOW output LED as a carton passes the sensor. Does it toggle cleanly (on when box present, off when clear)?",
+    "options": [
+     {
+      "label": "Yes — it toggles correctly but the zone still won't index",
+      "goto": "q_stopmove"
+     },
+     {
+      "label": "No / it's erratic or flashing",
+      "goto": "leaf_erratic"
+     },
+     {
+      "label": "The green LED is actually off too",
+      "goto": "leaf_power"
+     }
+    ]
+   },
+   "q_stopmove": {
+    "question": "Is the zone failing to STOP product (no accumulation) or failing to RELEASE it (product sits, won't index forward)?",
+    "options": [
+     {
+      "label": "Won't RELEASE — product just sits",
+      "goto": "leaf_downstream"
+     },
+     {
+      "label": "Won't STOP — product runs through / no accumulation",
+      "goto": "leaf_tryfirst"
+     }
+    ]
+   },
+   "leaf_power": {
+    "result": {
+     "search": "green led off no power dead zone voltage wiring",
+     "equip": "IntelliQ ZoneFlex (ZPA)"
+    }
+   },
+   "leaf_erratic": {
+    "result": {
+     "search": "yellow led flashing erratic missed detection clean align teach",
+     "equip": "IntelliQ ZoneFlex (ZPA)"
+    }
+   },
+   "leaf_ref": {
+    "result": {
+     "search": "what are zfs zfa zfm reference definition",
+     "equip": "IntelliQ ZoneFlex (ZPA)"
+    }
+   },
+   "leaf_tryfirst": {
+    "result": {
+     "search": "zone not accumulating releasing try this first",
+     "equip": "IntelliQ ZoneFlex (ZPA)"
+    }
+   },
+   "leaf_downstream": {
+    "note": "Sensor is detecting correctly, so the fault is downstream logic or the zone drive — not the sensor. ZoneFlex is zero-pressure: a zone only releases after the zone immediately downstream reports EMPTY. Check the downstream zone is clear and healthy, then check that zone's brake/drive (air-actuated brake or motor-driven roller depending on line type)."
+   }
+  }
  }
 ]

@@ -116,7 +116,7 @@ TREES = [
     },
 ]
 
-out_path = r"C:\Users\souyackg\Desktop\ACY1 Troubleshooter\admin\decision_trees.json"
+out_path = r"C:\Users\souyackg\Dev\tools\troubleshooter\admin\decision_trees.json"
 with open(out_path, "w", encoding="utf-8") as f:
     json.dump(TREES, f, ensure_ascii=False, indent=1)
 print(f"Wrote {len(TREES)} trees to {out_path}")
