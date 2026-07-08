@@ -2,12 +2,12 @@
 
 **RME Maintenance Troubleshooting Tool** — A single-file HTML app for ACY1 Reliability Maintenance Engineering techs to quickly diagnose and fix equipment issues.
 
-![Version](https://img.shields.io/badge/version-2.3.0-00cc99)
-![Entries](https://img.shields.io/badge/fixes-222-blue)
+![Version](https://img.shields.io/badge/version-2.4.0-00cc99)
+![Entries](https://img.shields.io/badge/fixes-237-blue)
 
 ## Features
 
-- **222 troubleshooting entries** across 8 categories
+- **237 troubleshooting entries** across 8 categories
 - 🔍 Fuzzy search with keyword matching
 - ⚡ Quick Fixes, 🔌 Device Checks, 🔬 Scope Diagnosis, 💻 Install/SSH, 📖 Escalation/FAQ, 🔄 Replacements, ⚡ VFD Faults, 🔌 MDR Blink Codes
 - Sidebar navigation with live counters
@@ -27,7 +27,7 @@
 | Escalation / FAQ | Process | When to escalate, who to call |
 | Replacements | Procedures | Step-by-step part replacement guides |
 | VFD Faults | 87 codes | PowerFlex 525 (F002–F127) + Eaton SVX9000/SPX9000 (F1–F56) fault references |
-| MDR Blink Codes | 10 codes | MDR/ConveyLinx control card LED diagnostic (0–9) |
+| MDR / ConveyLinx | 25 codes | DC brushless MDR blink codes (0–9) + ConveyLinx ERSC LED diagnostics |
 
 ## Deployment
 
