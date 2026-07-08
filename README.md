@@ -2,7 +2,7 @@
 
 **RME Maintenance Troubleshooting Tool** — A single-file HTML app for ACY1 Reliability Maintenance Engineering techs to quickly diagnose and fix equipment issues.
 
-![Version](https://img.shields.io/badge/version-2.4.0-00cc99)
+![Version](https://img.shields.io/badge/version-2.5.0-00cc99)
 ![Entries](https://img.shields.io/badge/fixes-237-blue)
 
 ## Features
