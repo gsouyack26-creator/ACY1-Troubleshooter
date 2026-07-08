@@ -2,14 +2,14 @@
 
 **RME Maintenance Troubleshooting Tool** — A single-file HTML app for ACY1 Reliability Maintenance Engineering techs to quickly diagnose and fix equipment issues.
 
-![Version](https://img.shields.io/badge/version-2.0.0-00cc99)
-![Entries](https://img.shields.io/badge/fixes-162-blue)
+![Version](https://img.shields.io/badge/version-2.1.0-00cc99)
+![Entries](https://img.shields.io/badge/fixes-172-blue)
 
 ## Features
 
-- **162 troubleshooting entries** across 7 categories
+- **172 troubleshooting entries** across 8 categories
 - 🔍 Fuzzy search with keyword matching
-- ⚡ Quick Fixes, 🔌 Device Checks, 🔬 Scope Diagnosis, 💻 Install/SSH, 📖 Escalation/FAQ, 🔄 Replacements, ⚡ VFD Faults
+- ⚡ Quick Fixes, 🔌 Device Checks, 🔬 Scope Diagnosis, 💻 Install/SSH, 📖 Escalation/FAQ, 🔄 Replacements, ⚡ VFD Faults, 🔌 MDR Blink Codes
 - Sidebar navigation with live counters
 - ⭐ Favorites & 🕐 Recent history (localStorage)
 - 🏷️ Contributor badges (red ★ creator, purple, green)
@@ -27,6 +27,7 @@
 | Escalation / FAQ | Process | When to escalate, who to call |
 | Replacements | Procedures | Step-by-step part replacement guides |
 | VFD Faults | 47 codes | PowerFlex 525 fault code reference (F002–F127) |
+| MDR Blink Codes | 10 codes | MDR/ConveyLinx control card LED diagnostic (0–9) |
 
 ## Deployment
 
@@ -46,9 +47,15 @@ The tool is deployed to the ACY1 RME network share with an auto-update launcher:
 
 ## Development
 
-The app is a single self-contained HTML file with embedded CSS, JS, and data. No build tools required.
+The app is a single self-contained HTML file with embedded CSS, JS, and data.
 
-**To add/edit entries:** Edit `Admin/troubleshooter_data.json`, then rebuild the DATA line in the HTML.
+**To add/edit entries:**
+1. Edit `admin/troubleshooter_data.json` (source of truth)
+2. Run `python build.py` — safely injects data into the HTML and syncs `version.txt` from the VERSION constant
+3. Bump `const VERSION` in the HTML before running the build if shipping a new version
+4. Copy the rebuilt HTML, version.txt, and JSON to the RME share
+
+Never hand-edit or regex the `const DATA = [...]` line — a `];` inside a step string can match the wrong terminator and corrupt the data. `build.py` does a full-line replace to avoid this.
 
 **Data format:**
 ```json
