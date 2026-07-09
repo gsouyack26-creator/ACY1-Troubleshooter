@@ -75,4 +75,4 @@ Never hand-edit or regex the `const DATA = [...]` line — a `];` inside a step 
 
 ## Author
 
-Built by **SOUYACKG** — ACY1 RME MHE/CSE Tech
+Built by **SOUYACKG** — ACY1 RME SMRT
