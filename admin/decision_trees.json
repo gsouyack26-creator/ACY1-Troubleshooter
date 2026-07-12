@@ -380,7 +380,9 @@
     }
    },
    "leaf_downstream": {
-    "note": "Sensor is detecting correctly, so the fault is downstream logic or the zone drive — not the sensor. ZoneFlex is zero-pressure: a zone only releases after the zone immediately downstream reports EMPTY. Check the downstream zone is clear and healthy, then check that zone's brake/drive (air-actuated brake or motor-driven roller depending on line type)."
+    "result": {
+     "note": "Sensor is detecting correctly, so the fault is downstream logic or the zone drive — not the sensor. ZoneFlex is zero-pressure: a zone only releases after the zone immediately downstream reports EMPTY. Check the downstream zone is clear and healthy, then check that zone's brake/drive (air-actuated brake or motor-driven roller depending on line type)."
+    }
    }
   }
  }
