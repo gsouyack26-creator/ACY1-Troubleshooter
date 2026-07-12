@@ -453,7 +453,7 @@ function jumpToEntry(key){currentTab='all';document.querySelectorAll('.nav-item'
 function printCard(key){openCards.add(key);render();setTimeout(()=>window.print(),200);}
 
 document.querySelectorAll('.nav-item').forEach(tab=>{tab.addEventListener('click',()=>{currentTab=tab.dataset.tab;if(currentTab==='guided'){guidedTree=null;guidedNode=null;guidedPath=[];guidedStack=[];}document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));tab.classList.add('active');render();});});
-document.getElementById('searchInput').addEventListener('input',render);
+document.getElementById('searchInput').addEventListener('input',(function(){let _t=null;return function(){clearTimeout(_t);_t=setTimeout(render,120);};})());
 eqSel.addEventListener('change',()=>{refreshDeviceOptions();render();});
 devSel.addEventListener('change',render);
 function clearFilters(){document.getElementById('searchInput').value='';eqSel.value='';refreshDeviceOptions();devSel.value='';currentTab='all';document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));document.querySelector('[data-tab="all"]').classList.add('active');render();}
