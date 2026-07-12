@@ -460,6 +460,7 @@ function clearFilters(){document.getElementById('searchInput').value='';eqSel.va
 
 function openReport(){document.getElementById('reportOverlay').classList.add('visible');}
 function closeReport(){document.getElementById('reportOverlay').classList.remove('visible');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('reportOverlay').classList.contains('visible'))closeReport();});
 function submitReport(){
   const equip=document.getElementById('reportEquip').value;
   const device=document.getElementById('reportDevice').value.trim();
