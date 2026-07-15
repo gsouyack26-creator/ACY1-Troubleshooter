@@ -68,24 +68,24 @@ def main():
 
     version = None
     for line in lines:
-        m = re.search(r'const VERSION\s*=\s*"([^"]+)"', line)
+        m = re.search(r'const VERSION\s*=\s*["\']([^"\']+)["\']', line)
         if m:
             version = m.group(1)
             break
     if not version:
         sys.exit("ERROR: could not find VERSION constant")
 
+    # Sanity-parse both injected payloads BEFORE writing anything to disk.
+    for name, compact in (("DATA", data_compact), ("TREES", trees_compact)):
+        injected = f"const {name} = {compact};"
+        body = injected[len(f"const {name} = "):-1]
+        json.loads(body)
+
     out = "".join(lines)
     encoded = out.encode("utf-8")
     HTML.write_bytes((b"\xef\xbb\xbf" if has_bom else b"") + encoded)
 
     VERSION_TXT.write_text(version + "\n", encoding="utf-8")
-
-    # Sanity re-parse of both injected lines
-    for name, compact in (("DATA", data_compact), ("TREES", trees_compact)):
-        injected = f"const {name} = {compact};"
-        body = injected[len(f"const {name} = "):-1]
-        json.loads(body)
 
     print("Built OK")
     print(f"  Version : {version}")
